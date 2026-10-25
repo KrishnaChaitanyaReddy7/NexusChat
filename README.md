@@ -1,15 +1,9 @@
 # NexusChat: Multi-User Messaging Application
 
 [![Java](https://img.shields.io/badge/Java-JDK%2017%2B%20%7C%2021%2B%20%7C%2025-orange.svg)](https://www.oracle.com/java/)
-[![GUI](https://img.shields.io/badge/GUI-Standard%20Java%20Swing-blue.svg)]()
-[![Database](https://img.shields.io/badge/Database-SQLite%20JDBC%20(Pure%20Java)-green.svg)](https://github.com/xerial/sqlite-jdbc)
+[![GUI](https://img.shields.io/badge/GUI-Swing-blue.svg)]()
+[![Database](https://img.shields.io/badge/Database-SQLite%20JDBC-green.svg)](https://github.com/xerial/sqlite-jdbc)
 [![Architecture](https://img.shields.io/badge/Architecture-Client--Server%20Sockets-purple.svg)]()
-[![Build](https://img.shields.io/badge/Build-Executable%20JARs%20%7C%20IntelliJ%20IDEA-brightgreen.svg)]()
-[![Tests](https://img.shields.io/badge/Tests-32%2F32%20Passing%20(100%25)-success.svg)]()
-
-**Course-Based Project (CBP)**  
-**Course:** Object-Oriented Programming through Java  
-**Syllabus Coverage:** Units I through V (Standard Java SE API, Swing, Sockets, Multithreading, JDBC). No external UI frameworks or batch (.bat) files.
 
 ---
 
@@ -22,8 +16,6 @@
   - [Scenario A: Same Local Network / Wi-Fi / Hotspot](#scenario-a-same-local-network--wi-fi--hotspot)
   - [Scenario B: Remote Connections (Tailscale / ngrok)](#scenario-b-remote-connections-tailscale--ngrok)
 - [IntelliJ IDEA Setup](#intellij-idea-setup)
-- [Syllabus Coverage Matrix (Units I-V)](#syllabus-coverage-matrix-units-i-v)
-- [Automated Verification Test Suite](#automated-verification-test-suite)
 - [Project Directory Structure](#project-directory-structure)
 - [Troubleshooting](#troubleshooting)
 
@@ -31,9 +23,9 @@
 
 ## Overview
 
-NexusChat is a client-server desktop chat application written in Java. It provides private one-on-one direct messaging (with delivery and read status ticks, chat bubbles, unread counts, and real-time message deletion) and group channels with owner permissions. 
+NexusChat is a client-server desktop messaging application written in Java. It provides private one-on-one direct messaging (with delivery and read status ticks, chat bubbles, unread counts, and real-time message deletion) and group channels with owner permissions. 
 
-The project is packaged as standalone executable JAR files with embedded SQLite JDBC and SLF4J dependencies. It runs directly via double-click or command line on Windows, macOS, and Linux without any batch scripts.
+The application is packaged as standalone executable JAR files with embedded SQLite JDBC and SLF4J dependencies. It runs directly via double-click or command line on Windows, macOS, and Linux without any batch scripts or external database setup.
 
 ---
 
@@ -159,82 +151,7 @@ The repository includes pre-configured IntelliJ IDEA project files (`.idea/` and
    - `NexusChat Launcher`: Launches main application.
    - `NexusChat Client (GUI)`: Launches GUI client directly.
    - `NexusChat Server`: Runs headless server.
-   - `NexusChat Verification Test`: Executes automated unit test suite.
 4. To rebuild artifacts in IntelliJ: go to **Build -> Build Artifacts... -> NexusChat:jar -> Build**.
-
----
-
-## Syllabus Coverage Matrix (Units I-V)
-
-| Unit | Syllabus Topics | Implementation Details | Key Classes |
-| :--- | :--- | :--- | :--- |
-| **Unit I** | Object-Oriented Thinking, Encapsulation, Constructors, `this`, Overloading, Static Nested Classes, Recursion, String, Type Wrappers | • User and Message models with private fields and public accessors.<br>• Constructor overloading with `this(...)`.<br>• Method overloading (`updateProfile`).<br>• Static nested class (`User.Builder`).<br>• Recursive search in `HistorySearchUtil.searchRecursive`.<br>• Wrapper parsing (`Integer.parseInt`, `Boolean.parseBoolean`). | `User.java`<br>`HistorySearchUtil.java`<br>`NexusConstants.java` |
-| **Unit II** | Inheritance, Polymorphism, Abstract Classes, `Object` Overriding, `super` & `final`, Packages, Interfaces, Interface Extension, Generics | • Abstract base `Message` class extended by `TextMessage`, `GroupMessage`, `SystemMessage`.<br>• Polymorphic method dispatch (`getFormattedDisplay`).<br>• Overriding `equals`, `hashCode`, `toString`.<br>• Modular packages (`nexuschat.model`, `dao`, `network`, `ui`, `util`, `exception`, `service`).<br>• Interface inheritance (`AdvancedChatService extends ChatService`).<br>• Generic class `MessagePacket<T>` and generic method `GenericFilterUtil.filter`. | `Message.java`<br>`TextMessage.java`<br>`GroupMessage.java`<br>`MessagePacket.java`<br>`AdvancedChatService.java`<br>`GenericFilterUtil.java` |
-| **Unit III** | Exception Handling (`try-catch-finally`, Custom Exceptions), Multithreading (Lifecycle, `Thread` vs `Runnable`, Priorities, Synchronization, `wait`/`notifyAll`, `ThreadGroup`, Daemon Threads) | • Custom checked exception hierarchy (`NexusException`, `AuthenticationException`, `UserNotFoundException`, `ChatValidationException`, `NetworkException`).<br>• Multithreaded server: `ClientHandler extends Thread` grouped under `ThreadGroup`.<br>• Client network reading on background `Runnable`.<br>• Synchronized registries and broadcast methods.<br>• Bounded queue using `wait()` and `notifyAll()` in `SynchronizedMessageBuffer`.<br>• Daemon thread monitoring via `setDaemon(true)`. | `NexusException.java`<br>`ClientHandler.java`<br>`NexusServer.java`<br>`NexusClient.java`<br>`SynchronizedMessageBuffer.java` |
-| **Unit IV** | Collections Framework (`List`, `Set`, `Map`, `Queue`), `java.io` Package (Streams, Readers/Writers), Event Handling (Delegation Model, Adapters), Layout Managers | • Collections: `ArrayList` (history), `HashSet` (online users), `HashMap` (active client sockets), `LinkedList` (buffer).<br>• `java.io`: Socket `BufferedReader`/`PrintWriter`, file writing with `BufferedWriter`.<br>• Event delegation: `ActionListener`, `KeyListener`, `MouseListener`.<br>• Adapters: `MouseAdapter`, `KeyAdapter`, `WindowAdapter`.<br>• Layouts: `CardLayout`, `GridBagLayout`, `BorderLayout`, `FlowLayout`, `GridLayout`. | `NexusChatApp.java`<br>`LoginPanel.java`<br>`ChatDashboardPanel.java`<br>`ChatServiceImpl.java` |
-| **Unit V** | Swing GUI Components, MVC Architecture, JDBC (Driver Types, Steps, Statements, `PreparedStatement`, `ResultSet`, `ResultSetMetaData`, Transactions) | • Swing Components: `JFrame`, `JPanel`, `JLabel`, `JTextField`, `JPasswordField`, `JButton`, `JCheckBox`, `JComboBox`, `JTree`, `JTable`, `JPopupMenu`, `JMenuBar`, `JMenuItem`, `JSeparator`.<br>• Pure Java SQLite JDBC Type-4 driver.<br>• Dynamic DDL table creation (`users`, `messages`, `chat_groups`, `group_members`).<br>• Parameterized queries via `PreparedStatement`.<br>• Dynamic column inspection via `ResultSetMetaData`.<br>• JDBC Transactions (`setAutoCommit(false)`, `commit`, `rollback`). | `DatabaseManager.java`<br>`UserDirectoryDialog.java`<br>`DatabaseOperations.java` |
-
----
-
-## Automated Verification Test Suite
-
-The test suite validates all 5 units programmatically:
-
-```bash
-java -cp "bin;lib/*" nexuschat.util.NexusChatVerificationTest
-```
-
-### Test Output (32 / 32 Passed)
-```text
-==================================================
-  NexusChat Syllabus Verification & Unit Test Suite
-==================================================
-
---- Testing Unit I: OOP Thinking, Overloading, Builder, Recursion ---
-[PASS] User Builder instantiation
-[PASS] User status enum assignment
-[PASS] Overloaded method 1 updateProfile(name)
-[PASS] Overloaded method 2 updateProfile(name, status)
-[PASS] Recursive keyword search (found 2 messages with 'java')
-[PASS] Recursive character calculation
-
---- Testing Unit II: Inheritance, Polymorphism, Generics ---
-[PASS] TextMessage polymorphism (getMessageType)
-[PASS] GroupMessage polymorphism (getMessageType)
-[PASS] SystemMessage polymorphism (getMessageType)
-[PASS] Polymorphic display formatting
-[PASS] Generic class MessagePacket<T> payload
-[PASS] Generic method filter() execution
-
---- Testing Unit III: Multithreading, Synchronized Buffer (wait/notify) ---
-[PASS] Inter-thread communication with wait() and notifyAll()
-
---- Testing Unit V: JDBC Database Operations (DDL, PreparedStatement, ResultSet) ---
-[PASS] JDBC table creation (users, messages, chat_groups)
-[PASS] JDBC PreparedStatement user registration
-[PASS] JDBC ResultSet user authentication
-[PASS] JDBC message insertion
-[PASS] JDBC message retrieval
-[PASS] Channel creation with owner attribution
-[PASS] Channel creator retrieval
-[PASS] Add user to channel based on username only
-[PASS] Verification of added channel member
-[PASS] Prevent non-owner from deleting channel
-[PASS] Prevent deletion of default channel (General)
-[PASS] Owner channel deletion permitted and executed
-[PASS] Channel removed completely after owner deletion
-
---- Testing Units III & IV: Client-Server Socket Communication ---
-[PASS] Socket connection to server
-[PASS] Network socket protocol login exchange
-[PASS] Socket network group creator request/response
-[PASS] Socket network member addition by username
-[PASS] Socket network group deletion broadcast event
-[PASS] Graceful socket disconnection and server stop
-==================================================
-TEST RESULTS: 32 / 32 PASSED (100%).
->>> ALL SYLLABUS CAPABILITIES VERIFIED 100% SUCCESSFULLY <<<
-```
 
 ---
 
@@ -248,22 +165,22 @@ NexusChat/
 ├── NexusChat.iml                     # IntelliJ Module File
 ├── pom.xml                           # Maven Build Configuration
 ├── .idea/                            # IntelliJ Run Configurations & Settings
-├── lib/                              # External Pure Java Libraries
+├── lib/                              # External Libraries
 │   ├── sqlite-jdbc-3.45.1.0.jar      # SQLite JDBC Driver
 │   ├── slf4j-api-2.0.12.jar          # Logging API
 │   └── slf4j-simple-2.0.12.jar       # Logger Implementation
 ├── src/nexuschat/
 │   ├── NexusChatLauncher.java        # Main launcher and bootstrap
-│   ├── model/                        # Domain entities and generics
+│   ├── model/                        # Domain entities and models
 │   ├── dao/                          # Database operations and JDBC manager
 │   ├── exception/                    # Custom exception classes
 │   ├── network/                      # Server, Client, Protocol, Handlers
 │   ├── service/                      # Chat business logic and file export
-│   ├── util/                         # Search, filters, constants, test suite
+│   ├── util/                         # Utilities, search, and constants
 │   └── ui/                           # Swing panels, dialogs, and main frame
 ├── .gitignore                        # Git exclusion rules (ignores *.db and caches)
-├── README.md                         # Project documentation
-└── PROJECT_REPORT.md                 # Academic report and viva guide
+├── README.md                         # Application documentation
+└── PROJECT_REPORT.md                 # Architecture and technical report
 ```
 
 ---
