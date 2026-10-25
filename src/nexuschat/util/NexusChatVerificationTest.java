@@ -6,6 +6,8 @@ import nexuschat.model.*;
 import nexuschat.network.NexusClient;
 import nexuschat.network.NexusServer;
 import nexuschat.network.SynchronizedMessageBuffer;
+import nexuschat.service.AesEncryptionService;
+import nexuschat.service.EncryptionService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -181,6 +183,16 @@ public class NexusChatVerificationTest {
         boolean registered = db.registerUser(testUser, "password123");
         assertTrue("JDBC PreparedStatement user registration", registered);
 
+        // Security verification: Password hash and AES encryption
+        String pwdHash = SecurityUtil.hashPassword("password123");
+        assertTrue("Password hashing generates 64-character SHA-256 hash", pwdHash != null && pwdHash.length() == 64 && !pwdHash.equals("password123"));
+
+        EncryptionService encService = new AesEncryptionService();
+        String samplePlain = "Confidential payload";
+        String sampleEnc = encService.encrypt(samplePlain);
+        assertTrue("AES message encryption converts to ciphertext", sampleEnc.startsWith("ENC:") && !sampleEnc.equals(samplePlain));
+        assertTrue("AES message decryption restores original plaintext", samplePlain.equals(encService.decrypt(sampleEnc)));
+
         // Authenticate user
         User authUser = db.authenticateUser("testuser1", "password123");
         assertTrue("JDBC ResultSet user authentication", authUser != null && authUser.getUsername().equals("testuser1"));
@@ -189,6 +201,17 @@ public class NexusChatVerificationTest {
         TextMessage msg = new TextMessage("testuser1", "bob", "Hello Bob JDBC");
         boolean msgSaved = db.saveMessage(msg);
         assertTrue("JDBC message insertion", msgSaved);
+
+        // Verify stored data in database is encrypted on disk
+        try (java.sql.Connection rawConn = java.sql.DriverManager.getConnection("jdbc:sqlite:test_nexuschat.db");
+             java.sql.Statement rawStmt = rawConn.createStatement()) {
+            try (java.sql.ResultSet rs = rawStmt.executeQuery("SELECT password_hash FROM users WHERE username = 'testuser1'")) {
+                assertTrue("Database stores hashed password at rest", rs.next() && rs.getString("password_hash").length() == 64 && !rs.getString("password_hash").equals("password123"));
+            }
+            try (java.sql.ResultSet rs = rawStmt.executeQuery("SELECT content FROM messages WHERE sender = 'testuser1'")) {
+                assertTrue("Database stores AES encrypted message content at rest", rs.next() && rs.getString("content").startsWith("ENC:"));
+            }
+        }
 
         List<Message> history = db.getDirectMessageHistory("testuser1", "bob", 10);
         assertTrue("JDBC message retrieval", !history.isEmpty() && history.get(0).getContent().equals("Hello Bob JDBC"));

@@ -51,6 +51,10 @@ The application is packaged as standalone executable JAR files with embedded SQL
 - **Process Decoupling**: When starting `NexusChat.jar`, the server is spawned as an independent background process (`ProcessBuilder`). Closing a client window does not kill the server for other active clients.
 - **Automatic Shutdown**: When the last remaining client window is closed, the server detects zero active connections, waits a 5-second grace period, and shuts itself down cleanly.
 
+### Security and Storage Encryption
+- **Password Protection**: Account passwords are stored as salted SHA-256 hashes (`SecurityUtil`) rather than plaintext.
+- **Message Encryption**: Message payloads are encrypted with AES (`AesEncryptionService`) before being stored in the database.
+
 ### Utilities
 - **User Directory**: View registered users in a Swing `JTable`.
 - **Recursive Search**: Search message histories recursively (`HistorySearchUtil`).

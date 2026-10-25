@@ -57,7 +57,7 @@ flowchart TD
 | **The `Object` Class** | Common root methods. | Overridden `toString()`, `equals()`, and `hashCode()` in `User` and `Message`. | `User.java#L107-L123` |
 | **The `final` Keyword** | Preventing inheritance and modification. | `NexusConstants` is a `final` class with `public static final` constants and a private constructor. | `src/nexuschat/util/NexusConstants.java` |
 | **Packages & CLASSPATH** | Namespace isolation and modular packaging. | Organized into packages: `nexuschat.model`, `dao`, `network`, `ui`, `exception`, `service`, `util`. | All source files |
-| **Interfaces & Variables in Interface** | Defining contracts and constant definitions. | `NetworkProtocol` with implicit `public static final` protocol commands. | `src/nexuschat/network/NetworkProtocol.java` |
+| **Interfaces & Variables in Interface** | Defining contracts and constant definitions. | `NetworkProtocol` with protocol commands; `EncryptionService` interface for cryptographic contracts. | `NetworkProtocol.java`, `EncryptionService.java` |
 | **Extending Interfaces** | Interface inheritance. | `AdvancedChatService` extends `ChatService`. | `src/nexuschat/service/` package |
 | **Generics (Generic Classes & Methods)** | Type safety without manual casting. | Generic class `MessagePacket<T>` and generic method `GenericFilterUtil.filter()`. | `MessagePacket.java`, `GenericFilterUtil.java` |
 

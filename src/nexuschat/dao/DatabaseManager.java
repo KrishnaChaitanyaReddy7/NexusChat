@@ -1,7 +1,10 @@
 package nexuschat.dao;
 
 import nexuschat.model.*;
+import nexuschat.service.AesEncryptionService;
+import nexuschat.service.EncryptionService;
 import nexuschat.util.NexusConstants;
+import nexuschat.util.SecurityUtil;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -27,6 +30,7 @@ import java.util.List;
 public class DatabaseManager implements DatabaseOperations {
 
     private final String dbUrl;
+    private final EncryptionService encryptionService = new AesEncryptionService();
 
     public DatabaseManager() {
         this(NexusConstants.DB_URL);
@@ -125,7 +129,7 @@ public class DatabaseManager implements DatabaseOperations {
 
             pstmt.setString(1, user.getUsername());
             pstmt.setString(2, user.getFullName());
-            pstmt.setString(3, password); // In production, salted hash
+            pstmt.setString(3, SecurityUtil.hashPassword(password));
             pstmt.setString(4, user.getStatus().name());
             pstmt.setLong(5, user.getRegistrationTimestamp());
 
@@ -142,21 +146,23 @@ public class DatabaseManager implements DatabaseOperations {
 
     @Override
     public User authenticateUser(String username, String password) throws Exception {
-        String sql = "SELECT user_id, username, full_name, password_hash, status, created_at FROM users WHERE username = ? AND password_hash = ?";
+        String sql = "SELECT user_id, username, full_name, password_hash, status, created_at FROM users WHERE username = ?";
         try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, username);
-            pstmt.setString(2, password);
 
             // Step 5: Process the ResultSet
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
-                    // Extract data by column type
+                    String storedHash = rs.getString("password_hash");
+                    if (!SecurityUtil.verifyPassword(password, storedHash)) {
+                        return null;
+                    }
+
                     int id = rs.getInt("user_id");
                     String uname = rs.getString("username");
                     String fullName = rs.getString("full_name");
-                    String pwd = rs.getString("password_hash");
                     String statusStr = rs.getString("status");
                     long createdAt = rs.getLong("created_at");
 
@@ -165,7 +171,7 @@ public class DatabaseManager implements DatabaseOperations {
                         status = UserStatus.valueOf(statusStr);
                     } catch (Exception ignored) {}
 
-                    return new User(id, uname, fullName, pwd, status, createdAt);
+                    return new User(id, uname, fullName, storedHash, status, createdAt);
                 }
             }
         }
@@ -240,7 +246,7 @@ public class DatabaseManager implements DatabaseOperations {
                 pstmt.setNull(4, Types.VARCHAR);
             }
 
-            pstmt.setString(5, message.getContent());
+            pstmt.setString(5, encryptionService.encrypt(message.getContent()));
             pstmt.setLong(6, message.getTimestamp());
             pstmt.setString(7, status);
 
@@ -290,7 +296,7 @@ public class DatabaseManager implements DatabaseOperations {
                     int id = rs.getInt("message_id");
                     String sender = rs.getString("sender");
                     String recipient = rs.getString("recipient");
-                    String content = rs.getString("content");
+                    String content = encryptionService.decrypt(rs.getString("content"));
                     long timestamp = rs.getLong("timestamp");
                     String status = rs.getString("status");
 
@@ -357,7 +363,7 @@ public class DatabaseManager implements DatabaseOperations {
                     int id = rs.getInt("message_id");
                     String sender = rs.getString("sender");
                     String grp = rs.getString("group_name");
-                    String content = rs.getString("content");
+                    String content = encryptionService.decrypt(rs.getString("content"));
                     long timestamp = rs.getLong("timestamp");
 
                     history.add(new GroupMessage(id, sender, grp, content, timestamp));
