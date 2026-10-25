@@ -4,6 +4,7 @@
 [![GUI](https://img.shields.io/badge/GUI-Swing-blue.svg)]()
 [![Database](https://img.shields.io/badge/Database-SQLite%20JDBC-green.svg)](https://github.com/xerial/sqlite-jdbc)
 [![Architecture](https://img.shields.io/badge/Architecture-Client--Server%20Sockets-purple.svg)]()
+[![Security](https://img.shields.io/badge/Security-AES%20%7C%20SHA--256-blueviolet.svg)]()
 
 ---
 
@@ -179,8 +180,8 @@ NexusChat/
 │   ├── dao/                          # Database operations and JDBC manager
 │   ├── exception/                    # Custom exception classes
 │   ├── network/                      # Server, Client, Protocol, Handlers
-│   ├── service/                      # Chat business logic and file export
-│   ├── util/                         # Utilities, search, and constants
+│   ├── service/                      # Chat business logic, export, AES encryption
+│   ├── util/                         # Utilities, search, constants, password hashing
 │   └── ui/                           # Swing panels, dialogs, and main frame
 ├── .gitignore                        # Git exclusion rules (ignores *.db and caches)
 ├── README.md                         # Application documentation
@@ -208,3 +209,7 @@ NexusChat/
 
 ### Channel Permissions
 - Only the user who created a channel can delete it. Default channels (`#General`, `#Developers`) cannot be deleted.
+
+### Storage and Security
+- `nexuschat.db` is created and managed automatically in the working directory on first launch.
+- Messages are stored using 128-bit AES encryption at rest, and account passwords are saved as salted SHA-256 hashes without requiring manual configuration.
