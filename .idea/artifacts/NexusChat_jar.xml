@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="false" name="NexusChat:jar">
+    <output-path>$PROJECT_DIR$</output-path>
+    <root id="archive" name="NexusChat.jar">
+      <element id="module-output" name="NexusChat" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/sqlite-jdbc-3.45.1.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/slf4j-api-2.0.12.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/slf4j-simple-2.0.12.jar" path-in-jar="/" />
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/target/manifest-launcher.mf" />
+      </element>
+    </root>
+  </artifact>
+</component>

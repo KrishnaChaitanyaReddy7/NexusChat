@@ -1,0 +1,9 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="NexusChat Client (GUI)" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="nexuschat.ui.NexusChatApp" />
+    <module name="NexusChat" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

@@ -1,0 +1,22 @@
+# Compiled class files
+*.class
+bin/
+target/
+
+# Local SQLite databases
+*.db
+*.db-journal
+
+# IntelliJ IDEA user-specific configuration
+.idea/workspace.xml
+.idea/shelf/
+.idea/caches/
+.idea/usage.statistics.xml
+*.iws
+
+# Standalone JARs (Releases tab on GitHub)
+*.jar
+!lib/*.jar
+
+# Log files
+*.log
